@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+
+# This script evaluates simple python expressions and prints the result.
+# For example:
+#     1+1
+#     5*(68-32)/9 
+#     2**10
+
+import sys
+from math import *
+
+expr = " ".join(sys.argv[1:]).strip()
+
+if not expr or expr == "-h":
+    sys.exit("USAGE: " + sys.argv[0] + " [python expr]\n")
+
+try:    
+    print(eval(expr.replace(",", "")))
+except Exception, e:
+    error_string = str(e)
+    sys.exit("ERROR: could not evaluate expression \"%(expr)s\".\n%(error_string)s.\n" % locals())
+    
+    
