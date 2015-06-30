@@ -1,0 +1,29 @@
+#!/bin/env python2.7
+
+import sys
+import os
+import argparse
+
+p = argparse.ArgumentParser("Send email ")
+p.add_argument("-t", "--to", help="Recipient's email")
+p.add_argument("-s", "--subject", help="Subject")
+p.add_argument("-b", "--body", help="Body")
+p.add_argument("files", nargs="+", help="one or more files to attach")
+options = p.parse_args()
+files = options.files
+
+for f in files:
+    if not os.path.isfile(f):
+        sys.exit("ERROR: " + f + " not found")
+    file_size = os.path.getsize(f)
+    if file_size > 25*10**6:
+       sys.exit("ERROR: " + f + " file size is above gmail's 25Mb attachment size limit. It's %d Mb" % (file_size / 10**6))
+
+subject = options.subject or ", ".join(files)
+body = options.body or ""
+attach_arg = " ".join(["-a " + f for f in files])
+username = os.getlogin()
+to = options.to or username
+cmd = "echo %(body)s | mail -s '%(subject)s' %(attach_arg)s %(to)s" % locals()
+print(cmd)
+os.system(cmd)
