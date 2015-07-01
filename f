@@ -18,5 +18,5 @@ if os.path.isdir(sys.argv[1]):
 
 for regexp in sys.argv[1:]:
     cmd = 'find %(directory)s -name "%(regexp)s"' % locals()
-    print(cmd)
+    #print(cmd)
     os.system(cmd)
