@@ -38,5 +38,5 @@ while idle_minutes_counter < args.minutes:
         logging.info("Current load = %s. Idle time reset to 0.", current_load)
         idle_minutes_counter = 0
 
-logging.info("Running command: '%s'...", args.shutdown_command)
+logging.info("Running command: '%s'", args.shutdown_command)
 subprocess.check_output(args.shutdown_command, shell=True)
