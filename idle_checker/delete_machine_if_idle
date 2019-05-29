@@ -3,6 +3,7 @@
 import argparse
 import logging
 import re
+import socket
 import subprocess
 import time
 
@@ -37,5 +38,6 @@ while idle_minutes_counter < args.minutes:
         logging.info("Current load = %s. Idle time reset to 0.", current_load)
         idle_minutes_counter = 0
 
-logging.info("Deleting machine...")
-subprocess.check_output("delete this machine")
+hostname = socket.gethostname()
+logging.info("Deleting machine %s...", hostname)
+subprocess.check_output("gcloud compute instances delete --quiet --delete-disks " + hostname, shell=True)
