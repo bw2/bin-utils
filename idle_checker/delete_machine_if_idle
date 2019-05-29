@@ -40,4 +40,4 @@ while idle_minutes_counter < args.minutes:
 
 hostname = socket.gethostname()
 logging.info("Deleting machine %s...", hostname)
-subprocess.check_output("gcloud compute instances delete --quiet --delete-disks " + hostname, shell=True)
+subprocess.check_output("gcloud compute instances delete --quiet " + hostname, shell=True)
