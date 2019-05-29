@@ -1,0 +1,34 @@
+#!/usr/bin/env python3
+
+import os
+import re
+import sys
+
+if len(sys.argv) < 2:
+    sys.exit("ERROR: Bucket path not specified")
+
+bucket_path = sys.argv[1]
+
+if not bucket_path.startswith("gs://"):
+    sys.exit("ERROR: Bucket path must start with gs://")
+
+bucket_path = re.sub("^gs://", "", bucket_path)
+directories = [d for d in bucket_path.split("/") if d]
+
+if len(directories) == 0:
+    sys.exit(f"ERROR: Invalid bucket path {bucket_path}")
+
+print(f"Mounting gs://{bucket_path} to {directories[-1]}")
+
+gcs_fuse_command = " ".join([
+    "gcsfuse", 
+    "--implicit-dirs", 
+    "--only-dir",
+    "/".join(directories[1:]) or "/",
+
+    directories[0],
+    directories[-1],
+])
+
+print(gcs_fuse_command)
+os.system(gcs_fuse_command)
