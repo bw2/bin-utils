@@ -13,7 +13,7 @@ p = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 p.add_argument("-L", "--load-threshold", type=float, default=0.2, help="utpime load below this threshold will be considered idle")
 p.add_argument("--minutes", type=float, default=60, help="shutdown after idle for this many minutes")
-p.add_argument("--shutdown-command", default="powerdown", help="run this command to shutdown the machine")
+p.add_argument("--shutdown-command", default="poweroff", help="run this command to shutdown the machine")
 args = p.parse_args()
 
 idle_minutes_counter = 0
