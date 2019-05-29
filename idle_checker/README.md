@@ -1,8 +1,8 @@
 
-#### [CentOS 7](https://geekflare.com/systemd-start-services-linux-7/) - To run shutdown_if_idle automatically on startup:
+#### [CentOS 7](https://geekflare.com/systemd-start-services-linux-7/) - To run shutdown_if_idle as a service:
 
 1. Copy `shutdown_if_idle` to `/usr/local/sbin/shutdown_if_idle`
-1. Create `/etc/systemd/system/shutdown_if_idle.service` which contains
+2. Create `/etc/systemd/system/shutdown_if_idle.service` which contains
 
 ```
 [Unit]
@@ -17,4 +17,10 @@ Restart=on-abort
 
 [Install]
 WantedBy=default.target
+```
+3. Run 
+```
+cd /etc/systemd/system
+sudo systemctl enable shutdown_if_idle.service
+sudo systemctl start shutdown_if_idle
 ```
