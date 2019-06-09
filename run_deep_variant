@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+import argparse
+import os
+import re
+
+p = argparse.ArgumentParaser()
+p.add_argument("-t", "--num-threads", type=int, default=1)
+p.add_argument("-m", "--model-type", choices=("WES", "WGS"), required=True)
+p.add_argument("ref_fasta_path")
+p.add_argument("bam_or_cram_path")
+args = p.parse_args()
+
+output_prefix = os.path.join(os.getcwd(), re.sub(".bam|.cram", "", os.path.basename(args.bam_or_cram_path))
+
+# see  https://github.com/google/deepvariant/blob/r0.8/docs/deepvariant-quick-start.md
+c = (
+    "sudo docker run "
+    "-v '/:/input' "
+    "-v '/:/output' "
+    "gcr.io/deepvariant-docker/deepvariant:0.8.0 "
+    "/opt/deepvariant/bin/run_deepvariant "
+    f"--model_type={args.model_type} "
+    f"--reads=/input/{args.bam_or_cram_path} "
+    f"--output_vcf=/output/{output_prefix}.vcf.gz "
+    f"--num-shards {args.num_threads} "
+    )
+
+print(c)
+#os.system(c)
