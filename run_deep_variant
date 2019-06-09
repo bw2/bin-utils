@@ -5,7 +5,7 @@ import logging
 import os
 import re
 
-logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s')
+logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level="INFO")
 
 p = argparse.ArgumentParser()
 p.add_argument("-t", "--num-threads", type=int, default=1)
@@ -34,11 +34,11 @@ c = (
     )
 
 logging.info("="*100)
-logging.info(f"Starting Deep Variant")
-logging.info(f"Input: {input_reads}")
-logging.info(f"Output: {output_vcf}")
+logging.info(f"     Input: {input_reads}")
+logging.info(f"    Output: {output_vcf}")
+logging.info(f"   Command: \n\n{c}\n\n")
+
 logging.info("="*100)
-logging.info(c)
 os.system(c)
 logging.info("Finished")
 logging.info("="*100)
