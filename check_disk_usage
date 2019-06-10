@@ -12,6 +12,7 @@ import time
 logging.basicConfig(level="INFO", format='%(asctime)-15s %(levelname)s: %(message)s')
 
 p = argparse.ArgumentParser(description="Prints subdirectory sizes.")
+p.add_argument("-G", "--gig", action="store_true", help="Only output paths that use more than 1Gb")
 p.add_argument("-t", "--total")
 p.add_argument("-v", "--verbose", action="store_true")
 p.add_argument("path", help="gs:// or local path", nargs="*")
@@ -24,23 +25,28 @@ for path in args.path:
 	if path.startswith("gs://"):
 		command = f"gsutil ls {path}"
 	else:
-		command = f"ls {os.path.abspath(path)}"
+		command = f"ls {path}"
 
 	subpaths = subprocess.check_output(command, shell=True, encoding="UTF-8").split()
-	for path in subpaths:
-		path = re.sub("/$", "", path)
+	for subpath in subpaths:
+		subpath = re.sub("/$", "", subpath)
 		if path.startswith("gs://"):
-			command = f"gsutil du -h -s {path}"
+			full_path = subpath
+			command = f"gsutil du -h -s {full_path}"
 		else:
+			full_path = os.path.join(path, subpath)
 			if platform.system() == "Darwin":
-			   command = f"du -h -d 0 {path}"
+			   command = f"du -h -d 0 {full_path}"
 			else:
-			   command = f"du -h -maxdepth 0 {path}"
+			   command = f"du -h -maxdepth 0 {full_path}"
+		if args.gig:
+		   command  += " 2>&1 | grep '[0-9][GT]' || true"
+
 		if args.verbose:
 			logging.info(command)
 		try:
-			output = subprocess.check_output(command, shell=True, encoding="UTF-8")
-			logging.info(output.strip("\n"))
+			output = subprocess.check_output(command, shell=True, encoding="UTF-8").strip("\n")
+			if output:
+			   logging.info(output)
 		except Exception as e:
 			logging.error("ERROR: %s", e)
-
