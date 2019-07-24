@@ -10,7 +10,7 @@ units = {
 }
 
 
-mash = { 'shift', 'ctrl', 'cmd' }
+mash = { 'shift', 'cmd' }
 hs.hotkey.bind(mash, 'i', function() hs.window.focusedWindow():move(units.top50,     nil, true) end)
 hs.hotkey.bind(mash, 'k', function() hs.window.focusedWindow():move(units.bot50,      nil, true) end)
 hs.hotkey.bind(mash, 'l', function() hs.window.focusedWindow():move(units.right50,    nil, true) end)
@@ -69,7 +69,7 @@ end
 -- Enters launch mode. The bulk of this is geared toward
 -- showing a big ugly window that can't be ignored; the
 -- keyboard is now in launch mode.
-hs.hotkey.bind({ 'ctrl' }, 'space', function()
+hs.hotkey.bind({ 'shift' }, 'space', function()
   launchMode:enter()
   appLauncherAlertWindow = hs.alert.show('App Launcher Mode', {
     strokeColor = hs.drawing.color.x11.orangered,
@@ -84,7 +84,7 @@ hs.hotkey.bind({ 'ctrl' }, 'space', function()
 end)
 
 -- When in launch mode, hitting ctrl+space again leaves it
-launchMode:bind({ 'ctrl' }, 'space', function() leaveMode() end)
+launchMode:bind({ 'shift' }, 'space', function() leaveMode() end)
 
 -- Mapped keys
 launchMode:bind({}, 'c',  function() switchToApp('Google Chrome.app') end)
