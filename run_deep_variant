@@ -10,6 +10,7 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s', level="INF
 p = argparse.ArgumentParser()
 p.add_argument("-t", "--num-threads", type=int, default=1)
 p.add_argument("-m", "--model-type", choices=("WES", "WGS"), required=True)
+p.add_argument("-r", "--regions", help="optional - path of .bed file", required=True)
 p.add_argument("ref_fasta_path")
 p.add_argument("bam_or_cram_path")
 args = p.parse_args()
@@ -18,6 +19,7 @@ input_ref_fasta = os.path.realpath(os.path.abspath(args.ref_fasta_path))
 input_reads = os.path.realpath(os.path.abspath(args.bam_or_cram_path))
 output_prefix = os.path.realpath(os.path.join(os.getcwd(), re.sub(".bam|.cram", "", os.path.basename(args.bam_or_cram_path))))
 output_vcf = f"{output_prefix}.vcf.gz"
+input_regions = os.path.realpath(os.path.abspath(args.regions)) if args.regions else ""
 
 # see  https://github.com/google/deepvariant/blob/r0.8/docs/deepvariant-quick-start.md
 c = (
@@ -30,11 +32,15 @@ c = (
     f"--model_type={args.model_type} "
     f"--reads=/input{input_reads} "
     f"--output_vcf=/output{output_vcf} "
-    f"--num_shards {args.num_threads} "
+    f"--num_shards {args.num_threads} " +
+    (f"--regions /input{input_regions} " if input_regions else "")
     )
+
+#     "--use-ref-for-cram "
 
 logging.info("="*100)
 logging.info(f"     Input: {input_reads}")
+logging.info(f"     Regions: {args.regions}")
 logging.info(f"    Output: {output_vcf}")
 logging.info(f"   Command: \n\n{c}\n\n")
 
