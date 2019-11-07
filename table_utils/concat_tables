@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+import argparse
+import collections
+import logging
+import os
+import sys
+import time
+
+logging.basicConfig(level="INFO", format='%(asctime)-15s %(levelname)s: %(message)s')
+
+p = argparse.ArgumentParser(description="Adds a column to a tab-delimitted file with a header name and a constant value.")
+p.add_argument("-n", "--column", help="Column name and value (eg. key=value)", action="append", default=[])
+p.add_argument("tsv_path", help="Input .tsv file path")
+args = p.parse_args()
+
+print(args.tsv_path)
+print(args.column)
+if not os.path.isfile(args.tsv_path):
+   p.error(f"{args.tsv_path} not found")
+
+output_filename = args.tsv_path.replace(".tsv", "")   
+columns = collections.OrderedDict()
+for column in args.column:
+    fields = column.split("=")
+    if len(fields) != 2:
+       p.error(f"{column} not of the form 'key=value'")
+
+    key, value = fields
+    columns[key] = value
+
+    output_filename += f".with_{column}_column"
+
+output_filename += ".tsv"
+
+print(columns)
+print(f"Writing to {output_filename}")
+
