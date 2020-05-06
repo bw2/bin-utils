@@ -15,7 +15,7 @@ Custom text-to-speach for MacOSX
      Where: bin-utils dir  (replacing existing files)
 4. Add a Run Bash Script step:
      Shell: /bin/bash    Pass Input: as arguments
-     /Users/weisburd/bin/bin-utils/speak.py
+     /Users/weisburd/bin/bin-utils/speak.py -v Ava
 
 5. System > Preferences > Keyboard Shortcuts > Service > speak > Command:option:+
 
@@ -33,6 +33,7 @@ fi
 """
 
 import os
+import sys
 
 path = os.path.expanduser("~/bin/bin-utils/say.txt")
 with open(path, "rt") as f:
@@ -46,7 +47,7 @@ for t in ["rnaseq", "rna-seq", "rna seq"]:
 with open(path, "wt") as f:
     f.write(contents)
 
-os.system("say -r 250 -v Ava -f " + path)  # -r range: 90 to 600+ words-per-minute
+os.system("say -r 250 " + " ".join(sys.argv[1:]) + " -f " + path)  # -r range: 90 to 600+ words-per-minute
 
 
 """
