@@ -46,4 +46,22 @@ for t in ["rnaseq", "rna-seq", "rna seq"]:
 with open(path, "wt") as f:
     f.write(contents)
 
-os.system("say -v Ava -f " + path)
+os.system("say -r 250 -v Ava -f " + path)  # -r range: 90 to 600+ words-per-minute
+
+
+"""
+Voices: (from say --voices=?)
+
+Alex                en_US    # Most people recognize me by my voice.
+Allison             en_US    # Hello, my name is Allison. I am an American-English voice.
+Ava                 en_US    # Hello, my name is Ava. I am an American-English voice.
+Daniel              en_GB    # Hello, my name is Daniel. I am a British-English voice.
+Fiona               en-scotland # Hello, my name is Fiona. I am a Scottish-English voice.
+Karen               en_AU    # Hello, my name is Karen. I am an Australian-English voice.
+Veena               en_IN    # Hello, my name is Veena. I am an Indian-English voice.
+Tessa               en_ZA    # Hello, my name is Tessa. I am a South African-English voice.
+Carmit              he_IL    # שלום. קוראים לי כרמית, ואני קול בשפה העברית.
+Milena              ru_RU    # Здравствуйте, меня зовут Milena. Я – русский голос системы.
+Yuri                ru_RU    # Здравствуйте, меня зовут Yuri. Я – русский голос системы.
+
+"""
