@@ -47,7 +47,10 @@ for t in ["rnaseq", "rna-seq", "rna seq"]:
 with open(path, "wt") as f:
     f.write(contents)
 
-os.system("say -r 250 " + " ".join(sys.argv[1:]) + " -f " + path)  # -r range: 90 to 600+ words-per-minute
+if "Milena" in sys.argv[1:]:
+	os.system("say -r 150 " + " ".join(sys.argv[1:]) + " -f " + path)  # -r range: 90 to 600+ words-per-minute
+else:
+	os.system("say -r 200 " + " ".join(sys.argv[1:]) + " -f " + path)  # -r range: 90 to 600+ words-per-minute
 
 
 """
