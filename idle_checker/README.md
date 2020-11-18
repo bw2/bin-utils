@@ -1,3 +1,5 @@
+The `idle_checker` script can run in the background and shutdown a VM if load stays below a certain threshold (0.2 by default) for more than a certain time (60 minutes by default). This is useful for cloud VMs that are occasionally used for manual tasks or batch processing.
+
 
 ### INSTALL
 
