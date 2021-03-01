@@ -39,11 +39,16 @@ path = os.path.expanduser("~/bin/bin-utils/say.txt")
 with open(path, "rt") as f:
     contents = f.read()
 
-# custom pronunciation
+# custom pronunciation - case-sensitive
+contents = contents.replace('ASOs', "a. s. o's. ")
+contents = contents.replace('ASO', "a. s. o. ")
+
+# custom pronunciation - case-insensitive
 contents = contents.lower()
 for t in ["rnaseq", "rna-seq", "rna seq"]:
     contents = contents.replace(t, "rna-seek")
-    
+contents = contents.replace('paradigm', "paradime" )
+
 with open(path, "wt") as f:
     f.write(contents)
 
