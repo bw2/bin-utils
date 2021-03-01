@@ -5,6 +5,13 @@
 """
 Custom text-to-speach for MacOSX
 
+Adding voices:
+
+1. Open System Preferences > Accessibility > Speech 
+2. Select system voices: Allison (or Ava) for English, Milena for Russian, Carmit for Hebrew
+
+Creating commands:
+
 "speak" command:
 
 1. Open Automator > Select New > Quick Action
@@ -13,11 +20,11 @@ Custom text-to-speach for MacOSX
      File format: Same as input text
      Save as: say.txt
      Where: bin-utils dir  (replacing existing files)
-4. Add a Run Bash Script step:
+4. Add a Run Shell Script step:
      Shell: /bin/bash    Pass Input: as arguments
      /Users/weisburd/bin/bin-utils/speak.py -v Ava
-
-5. System > Preferences > Keyboard Shortcuts > Service > speak > Command:option:+
+5. File > Export.. > enter workflow name > Save 
+6. System Preferences > Keyboard Shortcuts > Service > speak > Command:option:+
 
 
 "stop_speaking" command:
@@ -28,7 +35,20 @@ if pgrep say; then
    pkill -f say
 fi
 
-3. System > Preferences > Keyboard Shortcuts > Service > stop_speaking > Command:option:-
+3. System Preferences > Keyboard Shortcuts > Service > stop_speaking > Command:option:-
+
+
+Setting up commands:
+
+1. cd ~/bin/bin-utils/speak_quick_actions
+2. open speak.workflow   # confirm prompt to install 
+   open speak_russian.workflow
+   open stop_speaking.workflow
+3. System Preferences > Keyboard Shortcuts > Service > start_speaking > command-option-plus
+                                                        stop_speaking > command-option-minus
+                                                        speak_russian > command-option-9
+                                                         speak_hebrew > command-option-8
+
 
 """
 
@@ -52,11 +72,13 @@ contents = contents.replace('paradigm', "paradime" )
 with open(path, "wt") as f:
     f.write(contents)
 
+speech_rate = 200  # -r range: 90 to 600+ words-per-minute
 if "Milena" in sys.argv[1:]:
-	os.system("say -r 150 " + " ".join(sys.argv[1:]) + " -f " + path)  # -r range: 90 to 600+ words-per-minute
-else:
-	os.system("say -r 200 " + " ".join(sys.argv[1:]) + " -f " + path)  # -r range: 90 to 600+ words-per-minute
+    speech_rate = 150
+elif "Carmit" in sys.argv[1:]:
+    speech_rate = 120    
 
+os.system(f"say -r {speech_rate} " + " ".join(sys.argv[1:]) + " -f " + path)  
 
 """
 Voices: (from say --voices=?)
