@@ -1,0 +1,1 @@
+open -a "Tableau Desktop 2020.1.app" $1
