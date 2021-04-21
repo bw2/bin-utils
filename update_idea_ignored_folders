@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 
 """
 This script reads the .gitignore file from the current directory, finds all ignored directories,
