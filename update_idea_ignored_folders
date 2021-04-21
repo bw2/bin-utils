@@ -1,0 +1,80 @@
+#!/bin/env python3
+
+"""
+This script reads the .gitignore file from the current directory, finds all ignored directories,
+then adds them to the IntelliJ .idea/*.iml file. IntelliJ applies these changes automatically without restarting.
+"""
+
+import glob
+import os
+import sys
+import xml.etree.ElementTree as ET
+
+# check that .gitignore and .idea/*.iml exist in the current dir
+if not os.path.isfile(".gitignore"):
+    print(f"ERROR: .gitignore not found in {os.getcwd()}")
+    sys.exit(1)
+print("Found .gitignore")
+
+
+def assert_list_has_one_item(items, item_label, in_this, to_str=str):
+    if len(items) != 1:
+        if len(iml_paths) > 1:
+            print(f"ERROR: Found more than one {item_label} in {in_this}: " + ", ".join(map(to_str, items)))
+        else:
+            print(f"ERROR: {item_label} not found in {in_this}")
+        sys.exit(1)
+
+    item = items[0]
+    print(f"Found {item_label} in {in_this}: {to_str(item)}")
+    return item
+
+
+def xml_elem_to_str(x):
+    return "\n\n"+ET.tostring(x, encoding="unicode")
+
+
+iml_paths = glob.glob(".idea/*.iml")
+iml_path = assert_list_has_one_item(iml_paths, ".idea/*.iml file", os.getcwd())
+
+# parse .gitignore and search for matching dirs
+with open(".gitignore", "rt") as fh:
+    globs_to_ignore = [line.strip() for line in fh if line.strip().endswith("/")]
+
+paths_to_ignore = []
+for glob_string in globs_to_ignore:
+    paths = glob.glob(glob_string, recursive=True)
+    if not paths:
+        print(f"\"{glob_string}\" didn't match any paths")
+    else:
+        for path in paths:
+            paths_to_ignore.append(path)
+            print(f"\"{glob_string}\" matched {path}")
+
+# update .iml file
+with open(iml_path, "rt") as f:
+    tree = ET.parse(f)
+    root = tree.getroot()
+
+content_tags = list(root.iter("content"))
+content_tag = assert_list_has_one_item(content_tags, "'content' tag", iml_path, to_str=xml_elem_to_str)
+already_excluded_urls = [e.get("url") for e in content_tag if e.tag == "excludeFolder"]
+paths_to_add_to_excluded_urls = [
+    path for path in paths_to_ignore if not any(path in excluded_url for excluded_url in already_excluded_urls)
+]
+
+if not paths_to_add_to_excluded_urls:
+    print(f"All {len(paths_to_ignore)} dirs ignored by .gitignore are already excluded in {iml_path}")
+    sys.exit(0)
+
+print(f"Adding {len(paths_to_add_to_excluded_urls)} paths to {iml_path}:\n  " +
+      "\n  ".join(paths_to_add_to_excluded_urls))
+
+for path in paths_to_add_to_excluded_urls:
+    x = ET.fromstring(f"<excludeFolder url=\"file://$MODULE_DIR$/{path}\" />")
+    content_tag.append(x)
+
+print(ET.tostring(root).decode('UTF-8'))
+tree.write(iml_path)
+
+print(f"Updated {iml_path}")
