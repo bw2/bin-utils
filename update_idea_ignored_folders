@@ -2,7 +2,7 @@
 
 """
 This script reads the .gitignore file from the current directory, finds all ignored directories,
-then adds them to the IntelliJ .idea/*.iml file. IntelliJ applies these changes automatically without restarting.
+then adds them to the IntelliJ *.iml file. IntelliJ applies these changes automatically without restarting.
 """
 
 import glob
@@ -10,7 +10,7 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 
-# check that .gitignore and .idea/*.iml exist in the current dir
+# check that .gitignore and *.iml exist in the current dir
 if not os.path.isfile(".gitignore"):
     print(f"ERROR: .gitignore not found in {os.getcwd()}")
     sys.exit(1)
@@ -34,8 +34,8 @@ def xml_elem_to_str(x):
     return "\n\n"+ET.tostring(x, encoding="unicode")
 
 
-iml_paths = glob.glob(".idea/*.iml")
-iml_path = assert_list_has_one_item(iml_paths, ".idea/*.iml file", os.getcwd())
+iml_paths = glob.glob("*.iml")
+iml_path = assert_list_has_one_item(iml_paths, "*.iml file", os.getcwd())
 
 # parse .gitignore and search for matching dirs
 with open(".gitignore", "rt") as fh:
