@@ -34,7 +34,7 @@ def xml_elem_to_str(x):
     return "\n\n"+ET.tostring(x, encoding="unicode")
 
 
-iml_paths = glob.glob("*.iml")
+iml_paths = glob.glob("*.iml") + glob.glob(".idea/*.iml")
 iml_path = assert_list_has_one_item(iml_paths, "*.iml file", os.getcwd())
 
 # parse .gitignore and search for matching dirs
