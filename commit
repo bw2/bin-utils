@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+COMMENT=${1:-.}
+
+set -x
+git add -u
+git commit -m "${COMMENT}"
