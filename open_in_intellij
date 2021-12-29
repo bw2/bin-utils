@@ -1,1 +1,1 @@
-open -a "/Applications/IntelliJ\ IDEA.app" $1
+open -a /Applications/IntelliJ\ IDEA.app $1
