@@ -103,9 +103,9 @@ for is_dir, label in [(False, "Files"), (True, "Directories")]:
         date_string = str(path_to_latest_date[path]).split("+")[0]
         total_objects = path_to_total_objects[path]
         if is_dir:
-            print(f"   {path_size:10.1f} Gb     (last modified: {date_string})  {total_objects:12d} files   {path}")
+            print(f" {path_size:10.1f} Gb   (last modified: {date_string})  {total_objects:12d} files   gs://{path}")
         else:
-            print(f"   {path_size:10.1f} Gb     (last modified: {date_string})     {path}")
+            print(f" {path_size:10.1f} Gb   (last modified: {date_string})     gs://{path}")
     print("")
     
 if total_size_line is None:
