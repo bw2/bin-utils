@@ -27,7 +27,12 @@ for path in args.path:
 	else:
 		command = f"ls {path}"
 
-	subpaths = subprocess.check_output(command, shell=True, encoding="UTF-8").split()
+	try:
+		subpaths = subprocess.check_output(command, shell=True, encoding="UTF-8").split()
+	except Exception as e:
+		print(f"ERROR: unable to list path: {path}. Skipping...")
+		continue
+                
 	for subpath in subpaths:
 		subpath = re.sub("/$", "", subpath)
 		if path.startswith("gs://"):
@@ -39,8 +44,9 @@ for path in args.path:
 			   command = f"du -h -d 0 {full_path}"
 			else:
 			   command = f"du -h -d 0 {full_path}"
+
 		if args.gig:
-		   command  += " 2>&1 | grep '[0-9][GT]' || true"
+			command  += " 2>&1 | grep '[0-9][ ]*[GT]' || true"
 
 		if args.verbose:
 			logging.info(command)
