@@ -15,8 +15,8 @@ p = argparse.ArgumentParser(description="This script takes a Google Storage buck
                             "runs 'gsutil ls' to get all files and subdirectories as well as their sizes and last-modified dates. Then it "
                             "prints all files and subdirectories larger than a user-specified threshold (default 100Gb)")
 p.add_argument("--overwrite", help="Rerun 'gsutil ls' to get all files even if the cached results file already exists in the current directory", action="store_true")
-p.add_argument("--threshold", type=int, help="Print paths larger than this many gigabytes (default: 100)", default=100)
-
+p.add_argument("-t", "--threshold", type=int, help="Print paths larger than this many gigabytes (default: 10)", default=10)
+p.add_argument("-p", "--requester-pays-project", help="Google Cloud project to use for requester-pays buckets")
 p.add_argument("--sort-by", help="Sort output by size or by date", choices=("date", "size"), default="size")
 p.add_argument("bucket_path", help="Bucket path (eg. gs://gnomad-bw2/) to check for file sizes")
 args = p.parse_args()
@@ -32,7 +32,10 @@ def run(cmd):
     return result
 
 if not os.path.isfile(output_filename) or args.overwrite:
-    run(f"gsutil ls -l {os.path.join(args.bucket_path, '**')} | gzip -c - > {output_filename}")
+    cmd = "gsutil"
+    if args.requester_pays_project:
+       cmd += f" -u {args.requester_pays_project}"
+    run(f"{cmd} ls -l {os.path.join(args.bucket_path, '**')} | gzip -c - > {output_filename}")
 
 
 """
