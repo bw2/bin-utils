@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+from slacker import Slacker
+import configargparse
+parser = configargparse.ArgumentParser(default_config_files=["~/.step_pipeline"])
+parser.add_argument("--slack-token", env_var="SLACK_TOKEN", help="Slack token to use for notifications")
+parser.add_argument("--slack-channel", env_var="SLACK_CHANNEL", help="Slack channel to use for notifications")
+parser.add_argument("message")
+args, _ = parser.parse_known_args()
+
+slack = Slacker(args.slack_token)
+
+response = slack.chat.post_message(f"{args.slack_channel}", f"{args.message}", as_user=False, icon_emoji=":bell:", username="message-bot")
+print(response.raw)
+

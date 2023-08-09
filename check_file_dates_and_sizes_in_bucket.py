@@ -22,7 +22,7 @@ p.add_argument("bucket_path", help="Bucket path (eg. gs://gnomad-bw2/) to check 
 args = p.parse_args()
 
 # Run gsutil ls to get all files under bucket_path
-output_filename = re.sub("^gs://", "", args.bucket_path).strip("/").replace("/", "_") + ".txt.gz"
+output_filename = re.sub("^gs://", "", args.bucket_path).strip("/").replace("/", "_") + ".file_sizes.txt.gz"
 
 print(f"Writing to {output_filename}")
 
