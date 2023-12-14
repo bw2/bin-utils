@@ -11,11 +11,13 @@ import re
 import subprocess
 import tqdm
 
+DEFAULT_THRESHOLD = 10  # gigabytes
+
 p = argparse.ArgumentParser(description="This script takes a Google Storage bucket path (eg. gs://my-bucket or gs://my-bucket/dir/) and "
                             "runs 'gsutil ls' to get all files and subdirectories as well as their sizes and last-modified dates. Then it "
-                            "prints all files and subdirectories larger than a user-specified threshold (default 100Gb)")
-p.add_argument("--overwrite", help="Rerun 'gsutil ls' to get all files even if the cached results file already exists in the current directory", action="store_true")
-p.add_argument("-t", "--threshold", type=int, help="Print paths larger than this many gigabytes (default: 10)", default=10)
+                            f"prints all files and subdirectories larger than a user-specified threshold (default {DEFAULT_THRESHOLD}Gb)")
+p.add_argument("-f", "--overwrite", help="Rerun 'gsutil ls' to get all files even if the cached results file already exists in the current directory", action="store_true")
+p.add_argument("-t", "--threshold", type=int, help=f"Print paths larger than this many gigabytes (default: {DEFAULT_THRESHOLD})", default=DEFAULT_THRESHOLD)
 p.add_argument("-p", "--requester-pays-project", help="Google Cloud project to use for requester-pays buckets")
 p.add_argument("--sort-by", help="Sort output by size or by date", choices=("date", "size"), default="size")
 p.add_argument("bucket_path", help="Bucket path (eg. gs://gnomad-bw2/) to check for file sizes")
@@ -58,7 +60,7 @@ path_to_total_objects = collections.defaultdict(int)
 path_to_latest_date = collections.defaultdict(lambda: datetime.datetime(1,1,1, tzinfo=pytz.UTC))
 
 file_obj = gzip.open(output_filename, "rt")
-for line in tqdm.tqdm(file_obj, total=txt_file_size, unit=" lines"):
+for line in tqdm.tqdm(file_obj, total=txt_file_size, unit=" lines", unit_scale=True):
     line = line.strip()    
     if line.startswith("TOTAL:"):
         total_size_line = line
@@ -76,8 +78,9 @@ for line in tqdm.tqdm(file_obj, total=txt_file_size, unit=" lines"):
         path_date = parser.parse(date_string)
         path = re.sub("^gs://", "", file_path).strip("/")
 
+        # update stats for the file path and each parent directory
         is_dir = False
-        while len(path) > 1:
+        while len(path) > 0:
             path_is_dir[path] = is_dir
             path_to_total_objects[path] += 1
             path_to_total_size[path] += path_size
@@ -106,9 +109,9 @@ for is_dir, label in [(False, "Files"), (True, "Directories")]:
         date_string = str(path_to_latest_date[path]).split("+")[0]
         total_objects = path_to_total_objects[path]
         if is_dir:
-            print(f" {path_size:10.1f} Gb   (last modified: {date_string})  {total_objects:12d} files   gs://{path}")
+            print(f" {path_size:10,.1f} Gb   (last modified: {date_string})  {total_objects:12,d} files   gs://{path}")
         else:
-            print(f" {path_size:10.1f} Gb   (last modified: {date_string})     gs://{path}")
+            print(f" {path_size:10,.1f} Gb   (last modified: {date_string})     gs://{path}")
     print("")
     
 if total_size_line is None:
