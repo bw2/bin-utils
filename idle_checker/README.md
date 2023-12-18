@@ -18,7 +18,7 @@ sudo crontab -e  # edit root crontab
 4. reboot
 
 
-# INSTALL ON UBUNTU v20
+### INSTALL ON UBUNTU v20
 
 To install on Ubuntu with systemd, copy the `shutdown_if_idle` script from this repo to to /usr/local/sbin/shutdown_if_idle 
 
