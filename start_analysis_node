@@ -1,0 +1,3 @@
+
+gcloud compute instances start  --project bw2-rare-disease  analysis-node
+gcloud compute ssh  --project bw2-rare-disease  analysis-node
